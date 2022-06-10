@@ -1,5 +1,6 @@
 import express from 'express'
-import getAppId from '../utils/getAppId'
+import downloadFile from '../utils/downloadFile'
+import getAppId from '../utils/preDownload/getAppId'
 
 const app = express()
 
@@ -14,9 +15,17 @@ export default function startServer() {
 		const itemId = req.params.itemId
 		const appId = await getAppId(itemId)
 
-		console.log('App Id is 🆔 : ', appId)
-
-		res.send(appId?.toString())
+		if (appId) {
+			console.log('App Id is 🆔 : ', appId)
+			try {
+				const fileLocation = await downloadFile(appId, itemId)
+				res.download(fileLocation)
+			} catch (err) {
+				res.status(400).send(err)
+			}
+		} else {
+			res.status(404).send('No game found for this workshop item')
+		}
 	})
 
 	app.listen(port)
