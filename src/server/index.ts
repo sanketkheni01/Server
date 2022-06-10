@@ -17,6 +17,7 @@ export default function startServer() {
 
 		if (appId) {
 			console.log('App Id is 🆔 : ', appId)
+
 			try {
 				const fileLocation = await downloadFile(appId, itemId)
 				res.download(fileLocation)
